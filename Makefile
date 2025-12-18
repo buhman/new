@@ -116,6 +116,8 @@ MAIN_OBJS = \
 	src/make.o \
 	src/shader.o \
 	src/render.o \
+	src/state.o \
+	src/input.o \
 	model/test_scene_color.data.o \
 	$(SHADER_OBJS) \
 	$(GLFW)

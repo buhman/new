@@ -1,13 +1,10 @@
 #pragma once
 
-#include "state.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  void render(const struct state * state,
-              unsigned int program,
+  void render(unsigned int program,
               unsigned int program__trans,
               unsigned int program__texture0,
               unsigned int color,

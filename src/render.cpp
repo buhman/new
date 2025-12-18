@@ -3,9 +3,11 @@
 
 #include "glad/gl.h"
 
-#include "render.h"
 #include "math/float_types.hpp"
 #include "math/transform.hpp"
+
+#include "render.h"
+#include "state.hpp"
 
 mat4x4 perspective()
 {
@@ -17,15 +19,14 @@ mat4x4 perspective()
   return m1;
 }
 
-void render(const struct state * state,
-            unsigned int program,
+void render(unsigned int program,
             unsigned int program__trans,
             unsigned int program__texture0,
             unsigned int color,
             unsigned int vertex_array,
             int triangles_length)
 {
-  mat4x4 trans = perspective() * translate(vec3(0, 0, -2)) * scale(1.0f) * rotate_y(state->ry) * rotate_x(state->rx);
+  mat4x4 trans = perspective() * g_state.world_to_view * translate(vec3(0, 0, -2)) * scale(1.0f);
 
   glEnable(GL_DEPTH_TEST);
   glClearDepth(-1000.0f);

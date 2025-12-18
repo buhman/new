@@ -11,7 +11,7 @@
 #include "make.h"
 #include "shader.h"
 #include "render.h"
-#include "state.h"
+#include "input.h"
 #include "model/test_scene.h"
 #include "model/test_scene_color.data.h"
 #include "shader/scene.vs.glsl.h"
@@ -152,24 +152,15 @@ int main()
   const double first_frame = glfwGetTime();
   double last_frame = first_frame;
 
-  struct state state = {};
-
   while (!glfwWindowShouldClose(window)) {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-      state.rx += 0.01f;
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-      state.rx -= 0.01f;
-    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-      state.ry += 0.01f;
-    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-      state.ry -= 0.01f;
+
+    input();
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    render(&state,
-           program,
+    render(program,
            program__trans,
            program__texture0,
            scene_color,
@@ -178,8 +169,7 @@ int main()
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    render(&state,
-           program,
+    render(program,
            program__trans,
            program__texture0,
            scene_color,
