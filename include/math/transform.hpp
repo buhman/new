@@ -41,8 +41,8 @@ inline constexpr mat<4, 4, T> rotate_x(T t)
 {
   return {
     1,      0,       0, 0,
-    0, cos(t), -sin(t), 0,
-    0, sin(t),  cos(t), 0,
+    0, cosf(t), -sinf(t), 0,
+    0, sinf(t),  cosf(t), 0,
     0,      0,       0, 1
   };
 }
@@ -51,9 +51,9 @@ template <typename T>
 inline constexpr mat<4, 4, T> rotate_y(T t)
 {
   return {
-    cos(t), 0, sin(t), 0,
+    cosf(t), 0, sinf(t), 0,
          0, 1,      0, 0,
-   -sin(t), 0, cos(t), 0,
+   -sinf(t), 0, cosf(t), 0,
          0, 0,      0, 1
   };
 }
@@ -62,8 +62,8 @@ template <typename T>
 inline constexpr mat<4, 4, T> rotate_z(T t)
 {
   return {
-    cos(t), -sin(t), 0, 0,
-    sin(t),  cos(t), 0, 0,
+    cosf(t), -sinf(t), 0, 0,
+    sinf(t),  cosf(t), 0, 0,
          0,       0, 1, 0,
          0,       0, 0, 1
   };
@@ -149,7 +149,7 @@ template <typename T>
 inline constexpr T inverse_length(vec<3, T> v)
 {
   float f = dot(v, v);
-  return 1.0f / sqrt<T>(f);
+  return 1.0f / sqrtf(f);
 }
 
 template <typename T>

@@ -11,8 +11,8 @@ MAKEFILE_PATH := $(patsubst %/,%,$(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 DEBUG = -g
 
-CSTD += -std=gnu23
-CXXSTD += -std=gnu++23
+CSTD += -std=gnu11
+CXXSTD += -std=gnu++14
 
 CFLAGS += -Wall -Werror -Wfatal-errors
 CFLAGS += -Wno-error=unused-function
@@ -20,9 +20,9 @@ CFLAGS += -Wno-error=unused-variable
 CFLAGS += -I$(MAKEFILE_PATH)/include
 CFLAGS += -I$(dir $(GLFW))../include
 CXXFLAGS += -fno-exceptions
-LDFLAGS += -nostdlib++ -lm -Wl,-z noexecstack
+LDFLAGS += -lm -static-libgcc
 ifeq ($(shell uname),Linux)
-LDFLAGS += -static-libgcc
+LDFLAGS += -nostdlib++
 endif
 ifeq ($(OS),Windows_NT)
 LDFLAGS += -Wl,--subsystem,windows -mwindows

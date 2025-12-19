@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <assert.h>
+#include <stdbool.h>
 
 #include "glad/gl.h"
 
@@ -81,8 +82,8 @@ int main()
 #endif
   glfwInit();
   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
 
   GLFWwindow* window = glfwCreateWindow(vp_width, vp_height, "new", NULL, NULL);
@@ -106,6 +107,11 @@ int main()
             GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     return -1;
   }
+  printf("%d %d %d\n",
+	 GLAD_GL_ARB_framebuffer_object,
+	 GLAD_GL_ARB_texture_float,
+	 GLAD_GL_ARB_vertex_array_object);
+  fflush(stdout);
 
   //////////////////////////////////////////////////////////////////////
   // meshes
@@ -172,6 +178,8 @@ int main()
   const double frame_rate = 60.0;
   const double first_frame = glfwGetTime();
   double last_frame = first_frame;
+
+  fflush(stderr);
 
   while (!glfwWindowShouldClose(window)) {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

@@ -1,5 +1,7 @@
 #version 130
 
+precision highp float;
+
 uniform sampler2D texture0;
 
 in vec2 f_texture;
