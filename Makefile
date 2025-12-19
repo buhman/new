@@ -91,6 +91,10 @@ include/%.data.h: %.data
 include/%.data.pal.h: %.data.pal
 	$(BUILD_BINARY_H)
 
+include/model/%.h: model/%.obj
+	python $(HOME)/model_generator2/generate_indexed_cpp2.py \
+		$< $(notdir $(subst .obj,,$<)) > $@
+
 clean:
 	rm -f *.o *.d *.gch
 	rm -f main
@@ -118,7 +122,7 @@ MAIN_OBJS = \
 	src/render.o \
 	src/state.o \
 	src/input.o \
-	model/test_scene_color.data.o \
+	model/palette.data.o \
 	$(SHADER_OBJS) \
 	$(GLFW)
 

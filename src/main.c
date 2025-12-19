@@ -13,7 +13,9 @@
 #include "render.h"
 #include "input.h"
 #include "model/test_scene.h"
-#include "model/test_scene_color.data.h"
+#include "model/plane.h"
+#include "model/sphere.h"
+#include "model/palette.data.h"
 #include "shader/scene.vs.glsl.h"
 #include "shader/scene.fs.glsl.h"
 
@@ -26,6 +28,46 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
   vp_width = width;
   vp_height = height;
+}
+
+uint vertex_array_attributes(uint vertex_buffer,
+                             uint index_buffer)
+{
+  uint vertex_array;
+  glGenVertexArrays(1, &vertex_array);
+  glBindVertexArray(vertex_array);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+
+  glVertexAttribPointer(shader_attrib_position,
+                        3,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        (sizeof (float)) * 8,
+                        (void*)(0 * 4)
+                        );
+  glVertexAttribPointer(shader_attrib_texture,
+                        2,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        (sizeof (float)) * 8,
+                        (void*)(3 * 4)
+                        );
+  glVertexAttribPointer(shader_attrib_normal,
+                        3,
+                        GL_FLOAT,
+                        GL_FALSE,
+                        (sizeof (float)) * 8,
+                        (void*)(5 * 4)
+                        );
+  glEnableVertexAttribArray(shader_attrib_position);
+  glEnableVertexAttribArray(shader_attrib_texture);
+  glEnableVertexAttribArray(shader_attrib_normal);
+
+  glBindVertexArray(0);
+
+  return vertex_array;
 }
 
 int main()
@@ -59,7 +101,7 @@ int main()
     fprintf(stderr, "gladLoadGL error\n");
     return -1;
   }
-  if (!GLAD_GL_VERSION_3_0) {
+  if (!GLAD_GL_VERSION_2_1) {
     fprintf(stderr, "error: OpenGL version: %d.%d\n",
             GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     return -1;
@@ -73,40 +115,19 @@ int main()
   scene_mesh.vtx = make_buffer_sizeof(GL_ARRAY_BUFFER, test_scene_vertices);
   scene_mesh.idx = make_buffer_sizeof(GL_ELEMENT_ARRAY_BUFFER, test_scene_Plane_triangles);
   scene_mesh.length = test_scene_Plane_triangles_length;
+  scene_mesh.vertex_array = vertex_array_attributes(scene_mesh.vtx, scene_mesh.idx);
 
-  uint vertex_array;
-  glGenVertexArrays(1, &vertex_array);
-  glBindVertexArray(vertex_array);
+  struct mesh plane_mesh;
+  plane_mesh.vtx = make_buffer_sizeof(GL_ARRAY_BUFFER, plane_vertices);
+  plane_mesh.idx = make_buffer_sizeof(GL_ELEMENT_ARRAY_BUFFER, plane_Plane_triangles);
+  plane_mesh.length = plane_Plane_triangles_length;
+  plane_mesh.vertex_array = vertex_array_attributes(plane_mesh.vtx, plane_mesh.idx);
 
-  glBindBuffer(GL_ARRAY_BUFFER, scene_mesh.vtx);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scene_mesh.idx);
-
-  glVertexAttribPointer(shader_attrib_position,
-                        3,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        (sizeof (float)) * 8,
-                        (void*)(0 * 4)
-                        );
-  glVertexAttribPointer(shader_attrib_texture,
-                        2,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        (sizeof (float)) * 8,
-                        (void*)(3 * 4)
-                        );
-  glVertexAttribPointer(shader_attrib_normal,
-                        3,
-                        GL_FLOAT,
-                        GL_FALSE,
-                        (sizeof (float)) * 8,
-                        (void*)(5 * 4)
-                        );
-  glEnableVertexAttribArray(shader_attrib_position);
-  glEnableVertexAttribArray(shader_attrib_texture);
-  glEnableVertexAttribArray(shader_attrib_normal);
-
-  glBindVertexArray(0);
+  struct mesh sphere_mesh;
+  sphere_mesh.vtx = make_buffer_sizeof(GL_ARRAY_BUFFER, sphere_vertices);
+  sphere_mesh.idx = make_buffer_sizeof(GL_ELEMENT_ARRAY_BUFFER, sphere_Sphere_triangles);
+  sphere_mesh.length = sphere_Sphere_triangles_length;
+  sphere_mesh.vertex_array = vertex_array_attributes(sphere_mesh.vtx, sphere_mesh.idx);
 
   //////////////////////////////////////////////////////////////////////
   // shaders
@@ -124,12 +145,12 @@ int main()
   // textures
   //////////////////////////////////////////////////////////////////////
 
-  uint scene_color = make_texture(model_test_scene_color_data_start,
-                                  GL_RGB,
-                                  32,
-                                  32,
-                                  GL_RGB,
-                                  GL_UNSIGNED_BYTE);
+  uint texture_palette = make_texture(model_palette_data_start,
+                                      GL_RGB,
+                                      32,
+                                      32,
+                                      GL_RGB,
+                                      GL_UNSIGNED_BYTE);
 
   //////////////////////////////////////////////////////////////////////
   // framebuffer
@@ -158,23 +179,15 @@ int main()
 
     input();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    render(program,
-           program__trans,
-           program__texture0,
-           scene_color,
-           vertex_array,
-           scene_mesh.length);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     render(program,
            program__trans,
            program__texture0,
-           scene_color,
-           vertex_array,
-           scene_mesh.length);
+           texture_palette,
+           &scene_mesh,
+           &plane_mesh,
+           &sphere_mesh);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

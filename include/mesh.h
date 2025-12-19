@@ -6,6 +6,7 @@ extern "C" {
     unsigned int vtx;
     unsigned int idx;
     unsigned int length;
+    unsigned int vertex_array;
   };
 
 #ifdef __cplusplus
